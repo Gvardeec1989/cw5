@@ -8,5 +8,5 @@ class Skill:
     stamina: int
 
 
-ferocious_kick = Skill(name='Сильный удар', damage=12, stamina=6)
-powerful_thust = Skill(name='Крепкий щипок', damage=15, stamina=5)
+ferocious_kick = Skill(name='Свирепый пинок', damage=12, stamina=6)
+powerful_thust = Skill(name='Мощный укол', damage=15, stamina=5)
