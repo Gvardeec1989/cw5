@@ -67,14 +67,14 @@ def end_fight():
     return render_template("index.html", heroes=heroes)
 
 
-@app.route("/choose-hero/", methods=['post', 'get'])
+@app.route("/choose-hero", methods=['POST', 'GET'])
 def choose_hero():
     # TODO кнопка выбор героя. 2 метода GET и POST
     # TODO на GET отрисовываем форму.
     # TODO на POST отправляем форму и делаем редирект на эндпоинт choose enemy
     if request.method == 'GET':
         result = {
-            'classes': unit_classes,
+            'classes': unit_classes.keys(),
             'weapons': equipment.get_weapons_names(),
             'armors': equipment.get_armors_names(),
             'header': 'Выберите героя',
