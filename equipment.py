@@ -1,77 +1,73 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from random import uniform
+import random
 import marshmallow_dataclass
+import marshmallow
+from constants import EQUIPMENT_FILE
 import json
 
 
 @dataclass
-class Armor:
-    id: int
-    name: str
-    defence: float
-    stamina_per_turn: float
+class Weapon:
+	id: int
+	name: str
+	min_damage: float
+	max_damage: float
+	stamina_per_hit: float
+
+	def get_damage_by_weapon(self) -> float:
+		"""Рассчитывает случайный урон в промежутке min_damage - max_damage"""
+		damage = random.uniform(self.min_damage, self.max_damage)
+		return round(damage, 1)
 
 
 @dataclass
-class Weapon:
-    id: int
-    name: str
-    min_damage: float
-    max_damage: float
-    stamina_per_hit: float
-
-    @property
-    def damage(self):
-        return round(uniform(self.min_damage, self.max_damage), 1)
+class Armor:
+	id: int
+	name: str
+	defence: float
+	stamina_per_turn: float
 
 
 @dataclass
 class EquipmentData:
-    # TODO содержит 2 списка - с оружием и с броней
-    weapons: List[Weapon]
-    armors: List[Armor]
+	weapons: List[Weapon]
+	armors: List[Armor]
 
 
 class Equipment:
+	def __init__(self):
+		self._equipment = self._get_data()
 
-    def __init__(self):
-        self.equipment = self._get_equipment_data()
+	@staticmethod
+	def _get_data():
+		"""Загружает данные из файла и шаблонизирует их"""
+		with open(EQUIPMENT_FILE, 'r', encoding='utf-8') as file:
+			data = json.load(file)
+		try:
+			equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
+			return equipment_schema().load(data)
+		except marshmallow.exceptions.ValidationError:
+			raise ValueError
 
-    def get_weapon(self, name: str) -> Optional[Weapon]:
-        # TODO возвращает объект оружия по имени
-        for weapon in self.equipment.weapons:
-            if weapon.name == name:
-                return weapon
-        return None
+	def get_weapon(self, weapon: str) -> Optional[Weapon]:
+		"""Находит оружие по названию"""
+		for item in self._equipment.weapons:
+			if weapon == item.name:
+				return item
+		return None
 
-    def get_armor(self, name: str) -> Optional[Armor]:
-        # TODO возвращает объект брони по имени
-        for armor in self.equipment.armors:
-            if armor.name == name:
-                return armor
-        return None
+	def get_armor(self, armor: str) -> Optional[Armor]:
+		"""Находит броню по названию"""
+		for item in self._equipment.armors:
+			if armor == item.name:
+				return item
+		return None
 
-    def get_weapons_names(self) -> list[str]:
-        # TODO возвращаем список с оружием
-        return [
-            weapon.name
-            for weapon in self.equipment.weapons
-        ]
+	def get_weapon_names(self) -> List[str]:
+		"""Возвращает список оружия"""
+		return [i.name for i in self._equipment.weapons]
 
-    def get_armors_names(self) -> list[str]:
-        # TODO возвращаем список с броней
-        return [
-            armor.name
-            for armor in self.equipment.armors
-        ]
-
-    @staticmethod
-    def _get_equipment_data() -> EquipmentData:
-        # TODO этот метод загружает json в переменную EquipmentData
-        with open("data/equipment.json") as equipment_file:
-            data = json.load(equipment_file)
-            equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
-
-            return equipment_schema().load(data)
-
+	def get_armor_names(self) -> List[str]:
+		"""Возвращает список брони"""
+		return [i.name for i in self._equipment.armors]
