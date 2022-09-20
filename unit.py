@@ -128,7 +128,7 @@ class UserUnit(BaseUnit):
         return self._strike(enemy)
 
 
-class PC_Unit(BaseUnit):
+class PCUnit(BaseUnit):
     """Наносит удар"""
 
     def hit(self, enemy: BaseUnit) -> Optional[str]:

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 from classes import unit_classes
 from equipment import Equipment
 from base import Arena
-from unit import BaseUnit, UserUnit, PC_Unit
+from unit import BaseUnit, UserUnit, PCUnit
 
 app = Flask(__name__)
 
@@ -58,7 +58,7 @@ def choose_enemy():
 
     elif request.method == 'POST':
         result = dict(request.form)
-        heroes['enemy'] = PC_Unit(
+        heroes['enemy'] = PCUnit(
             name=result.get('name'),
             unit_class=unit_classes[result.get('unit_class')]
         )
@@ -76,7 +76,7 @@ def start_fight():
     return render_template('fight.html', heroes=heroes)
 
 
-@app.route("/fight/hit")
+@app.route("/fight/hit/")
 def hit():
     """Нанесение удара"""
     result, battle_result = '', ''
@@ -90,7 +90,7 @@ def hit():
     return render_template('fight.html', heroes=heroes, result=result, battle_result=battle_result)
 
 
-@app.route("/fight/use-skill")
+@app.route("/fight/use-skill/")
 def use_skill():
     """Использование умения"""
     result, battle_result = '', ''
